@@ -53,18 +53,35 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector & OutHitLocation) con
 		
 	// "De-project" the screen position of the cursor or crosshair to a world direction
 	FVector LookDirection;
+	FHitResult HitLocation;
+
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *LookDirection.ToString());
-	}
+		// Line-trace along that LookDirection, and see what we hit (up to max range)
+		if (GetLookVectorHitLocation(LookDirection, HitLocation)) 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HitLocation: %s"), *HitLocation.Location.ToString());
+		}
+	}	
 	
-	// Line-trace along that LookDirection, and see what we hit (up to max range)
 	OutHitLocation = FVector(1.0);
 	return false;
 }
 
-bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
+bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FHitResult & OutHitLocation) const
+{
+	/*if (LineTraceSingleByChannel(OutHitLocation, LookDirection, { (LookDirection.X + LineTraceRange), LookDirection.Y, LookDirection.Z }, ECollisionChannel::ECC_Visibility, null, null))
+	{
+		return true;
+	}*/
+
+	return false;
+}
+
+bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector & LookDirection) const
 {
 	FVector CameraWorldLocation; // To be discarded
 	return (DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraWorldLocation, LookDirection));		
 }
+
+
